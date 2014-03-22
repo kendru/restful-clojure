@@ -23,24 +23,9 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
 
 	config.vm.synced_folder "./restful-clojure", "/vagrant"
 
-	# Provider-specific configuration so you can fine-tune various
-	# backing providers for Vagrant. These expose provider-specific options.
-	# Example for VirtualBox:
-	#
-	# config.vm.provider :virtualbox do |vb|
-	#   # Don't boot with headless mode
-	#   vb.gui = true
-	#
-	#   # Use VBoxManage to customize the VM. For example to change memory:
-	#   vb.customize ["modifyvm", :id, "--memory", "1024"]
-	# end
-	#
-	# View the documentation for the provider you're using for more
-	# information on available options.
-
 	config.vm.provision "puppet" do |puppet|
 		puppet.manifests_path = "puppet/manifests"
-		puppet.module_path = "puppet/modules"
 		puppet.manifest_file = "default.pp"
+		puppet.module_path = "puppet/modules"
 	end
 end
