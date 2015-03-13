@@ -64,7 +64,7 @@
     (testing "GET /users/:id/lists"
       (let [my-list (l/create {:user_id (:id user) :title "Wonderful Stuffs"})
             response (app (request :get (str "/users/" (:id user) "/lists")))]
-        (is (= (:body response) (json/generate-string [my-list])))))))
+        (is (= (:body response) (json/generate-string [(dissoc my-list :user_id)])))))))
 
 (deftest delete-user
   (let [user (u/create {:name "John Doe" :email "j.doe@mytest.com"})]

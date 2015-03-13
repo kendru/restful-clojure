@@ -1,6 +1,7 @@
 (ns restful-clojure.models.lists
   (:use korma.core)
-  (:require [restful-clojure.entities :as e]))
+  (:require [restful-clojure.entities :as e]
+            [clojure.set :refer [difference]]))
 
 (declare add-product)
 
@@ -51,10 +52,37 @@
       (exec-raw [sql [(:id listdata) product-id status] :results])
       (find-by-id (:id listdata)))))
 
+(defn remove-product [listdata product-id]
+  (delete "lists_products"
+    (where {:list_id (:id listdata)
+            :product_id product-id}))
+   (update-in listdata [:products]
+     (fn [products] (remove #(= (:id %) product-id) products))))
+
+(defn- get-product-ids-for
+  "Gets a set of all product ids that belong to a particular list"
+  [listdata]
+  (into #{}
+    (map :product_id
+      (select "lists_products"
+        (fields :product_id)
+        (where {:list_id (:id listdata)})))))
+
 (defn update-list [listdata]
   (update e/lists
     (set-fields (dissoc listdata :id :products))
-    (where {:id (:id listdata)})))
+    (where {:id (:id listdata)}))
+  (let [existing-product-ids (get-product-ids-for listdata)
+        updated-product-ids (->> (:products listdata)
+                                 (map :id)
+                                 (into #{}))
+        to-add (difference updated-product-ids existing-product-ids)
+        to-remove (difference existing-product-ids updated-product-ids)]
+    (doseq [prod-id to-add]
+      (add-product listdata prod-id))
+    (doseq [prod-id to-remove]
+      (remove-product listdata prod-id))
+    (find-by-id (:id listdata))))
 
 (defn delete-list [listdata]
   (delete e/lists
