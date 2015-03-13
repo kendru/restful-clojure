@@ -34,22 +34,25 @@
       {:status 200
        :body {:count (lists/count-lists)
               :results (lists/find-all)}})
+
     (POST "/" {listdata :body}
       (let [new-list (lists/create listdata)]
        {:status 201
         :headers {"Location" (str "/users/" (:user_id new-list) "/lists")}}))
+
     (GET "/:id" [id]
       (response (lists/find-by-id (read-string id))))
+
     (PUT "/:id" {params :params listdata :body}
       (let [id (:id params)]
         (if (nil? id)
           {:status 404
            :headers {"Location" "/lists"}}
-           
+
            ((lists/update-list (assoc listdata :id id))
            {:status 200
             :headers {"Location" (str "/lists/" id)}}))))
-      (response (lists/find-by-id (read-string id))))
+
     (DELETE "/:id" [id]
       (lists/delete-list {:id (read-string id)})
       {:status 204
@@ -61,6 +64,7 @@
       {:status 200
        :body {:count (products/count-products)
               :results (products/find-all)}})
+
     (POST "/" {product :body}
       (let [new-prod (products/create product)]
        {:status 201

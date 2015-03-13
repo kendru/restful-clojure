@@ -66,4 +66,44 @@
                                     :title "Most interesting"
                                     :products [pintos]})]
         (is (= [pintos] (:products listdata)))
-        (is (= [pintos] (:products (lists/find-by-id (:id listdata)))))))))
+        (is (= [pintos] (:products (lists/find-by-id (:id listdata)))))))
+
+    (testing "Creates products added with an update"
+      (let [listdata (lists/create {:user_id (:id user)
+                                    :title "Things to update"
+                                    :products [pintos]})
+            coffee (products/create {:title "Coffee Beans"
+                                     :description "No, not *THAT* Java"})
+            updated (lists/update-list (update-in listdata [:products] conj coffee))]
+        (is (= [pintos coffee] (:products updated)))
+        (is (= [pintos coffee] (:products (lists/find-by-id (:id listdata)))))))))
+
+(deftest remove-products
+  (let [user (users/create {:name "Test user" :email "me@mytest.com"})
+        kidneys (products/create {:title "Kidney Beans"
+                                  :description "Poor Charlie the Unicorn..."})
+        limas (products/create {:title "Lima Beans"
+                                :description "Yuck!"})
+        my-list (lists/create {:user_id (:id user)
+                               :title "My list"
+                               :products [kidneys limas]})]
+    (testing "Does not remove a product from the database entirely"
+      (let [fresh-list (lists/create {:user_id (:id user)
+                                      :title "My list"
+                                      :products [kidneys limas]})]
+        (lists/remove-product fresh-list (:id kidneys))
+        (is (not (nil? (products/find-by-id (:id kidneys)))))))
+
+    (testing "Removes a product from a list"
+      (let [modified-list (lists/remove-product my-list (:id kidneys))]
+        (is (= [limas] (:products modified-list)))))
+
+    (testing "Removes products absent from an update"
+      (let [coffee (products/create {:title "Coffee Beans"
+                                     :description "No, not *THAT* Java"})
+            listdata (lists/create {:user_id (:id user)
+                                    :title "Things to update"
+                                    :products [limas coffee]})
+            updated (lists/update-list (assoc listdata :products [coffee]))]
+        (is (= [coffee] (:products updated)))
+        (is (= [coffee] (:products (lists/find-by-id (:id listdata)))))))))
