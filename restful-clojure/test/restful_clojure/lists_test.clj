@@ -8,7 +8,7 @@
 (use-fixtures :each with-rollback)
 
 (deftest create-list
-  (let [user (users/create {:name "Test user" :email "me@mytest.com"})]
+  (let [user (users/create {:name "Test user" :email "me@mytest.com" :password "s3cret"})]
 
     (testing "Create a list for given user"
       (let [count-orig (lists/count-lists)]
@@ -16,7 +16,7 @@
         (is (= (inc count-orig) (lists/count-lists)))))))
 
 (deftest retrieve-list
-  (let [user (users/create {:name "Test user" :email "me@mytest.com"})]
+  (let [user (users/create {:name "Test user" :email "me@mytest.com" :password "s3cr3t"})]
 
     (testing "Retrieve a list by id"
       (let [my-list (lists/create {:user_id (:id user) :title "My list"})
@@ -25,7 +25,7 @@
         (is (= (:id user) (:user_id found-list)))))))
 
 (deftest update-list
-  (let [user (users/create {:name "Test user" :email "me@mytest.com"})]
+  (let [user (users/create {:name "Test user" :email "me@mytest.com" :password "s3cr3t"})]
 
     (testing "Modifies existing list"
       (let [list-orig (lists/create {:user_id (:id user)
@@ -35,7 +35,7 @@
         (is (= "Awesome Languages" (:title (lists/find-by-id list-id))))))))
 
 (deftest delete-lists
-  (let [user (users/create {:name "Test user" :email "me@mytest.com"})
+  (let [user (users/create {:name "Test user" :email "me@mytest.com" :password "s3cr3t"})
         user-id (:id user)]
     (testing "Decreases list count"
       (let [listdata (lists/create {:user_id user-id :title "Unimportant things"})
@@ -53,7 +53,7 @@
                (lists/find-by-id (:id list-del))))))))
 
 (deftest add-products
-  (let [user (users/create {:name "Test user" :email "me@mytest.com"})
+  (let [user (users/create {:name "Test user" :email "me@mytest.com" :password "s3cr3t"})
         my-list (lists/create {:user_id (:id user) :title "My list"})
         pintos (products/create {:title "Pinto Beans"
                                  :description "Yummy beans for burritos"})]
@@ -79,7 +79,7 @@
         (is (= [pintos coffee] (:products (lists/find-by-id (:id listdata)))))))))
 
 (deftest remove-products
-  (let [user (users/create {:name "Test user" :email "me@mytest.com"})
+  (let [user (users/create {:name "Test user" :email "me@mytest.com" :password "s3cr3t"})
         kidneys (products/create {:title "Kidney Beans"
                                   :description "Poor Charlie the Unicorn..."})
         limas (products/create {:title "Lima Beans"

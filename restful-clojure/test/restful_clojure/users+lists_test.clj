@@ -10,7 +10,7 @@
 (use-fixtures :each with-rollback)
 
 (deftest user-list-interactions
-  (let [user (users/create {:name "Jed" :email "jed@i.com"})
+  (let [user (users/create {:name "Jed" :email "jed@i.com" :password "s3cr3t"})
         my-list (lists/create {:user_id (user :id)
                                :title "Ways to use the force"})]
     (testing "Get user for given list"
@@ -26,7 +26,8 @@
 (deftest cascading-operations
   (testing "Deleting user removes associated lists"
     (let [jack (users/create {:name "Jack"
-                              :email "beanstalkz@example.com"})
+                              :email "beanstalkz@example.com"
+                              :password "s3cr3t"})
           tmp-list (lists/create {:user_id (jack :id)
                                   :title "Talking points"})]
       (users/delete-user jack)

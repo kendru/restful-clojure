@@ -15,7 +15,7 @@
   (table :lists)
   (belongs-to users {:fk :user_id})
   (many-to-many products :lists_products {:lfk :list_id
-                                       :rfk :product_id})
+                                          :rfk :product_id})
   (entity-fields :title))
 
 (defentity products
@@ -24,4 +24,9 @@
   (many-to-many lists :lists_products {:lfk :product_id
                                        :rfk :list_id})
   (entity-fields :title :description))
+
+(defentity auth-tokens
+  (pk :id)
+  (table :auth_tokens)
+  (belongs-to users {:fk :user_id}))
 

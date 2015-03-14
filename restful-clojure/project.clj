@@ -12,7 +12,10 @@
                  [korma "0.3.0-RC5"]
                  [org.postgresql/postgresql "9.2-1002-jdbc4"]
                  [ragtime "0.3.4"]
-                 [environ "0.4.0"]]
+                 [environ "0.4.0"]
+                 [buddy/buddy-hashers "0.4.0"]
+                 [buddy/buddy-auth "0.4.0"]
+                 [crypto-random "1.2.0"]]
 
   ; The lein-ring plugin allows us to easily start a development web server
   ; with "lein ring server". It also allows us to package up our application

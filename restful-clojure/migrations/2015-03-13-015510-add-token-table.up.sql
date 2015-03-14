@@ -1,0 +1,6 @@
+CREATE TABLE auth_tokens (
+    id VARCHAR(44) PRIMARY KEY,
+    user_id INTEGER REFERENCES users(id) ON DELETE CASCADE,
+    created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP
+);
+CREATE INDEX ON auth_tokens (id, created_at DESC);
